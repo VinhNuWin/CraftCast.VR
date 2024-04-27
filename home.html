@@ -4,17 +4,35 @@
     <meta charset="UTF-8" />
     <title>Send to ChatGPT API</title>
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+  </head>
+  <body>
+    <h1>ChatGPT API Integration</h1>
+    <input type="text" id="inputText" placeholder="Enter your text here" />
+    <button onclick="handleSubmit()">Send</button>
+    <pre
+      id="apiResponse"
+      style="
+        background: #f4f4f4;
+        padding: 10px;
+        border: 1px solid #ddd;
+        border-radius: 5px;
+        margin-top: 20px;
+      "
+    ></pre>
+
     <script>
       async function sendToChatGPTApi(text) {
-        console.log("Sending to ChatGPT API via Netlify Function");
+        console.log("Sending to ChatGPT API via Heroku server");
         try {
-          const response = await axios.post("/.netlify/functions/chatGPT", {
-            text,
-          });
+          const response = await axios.post(
+            "https://craft-server-api-4a5c605b59f7.herokuapp.com/process",
+            { text }
+          );
           console.log("Response from server:", response.data);
           displayResponse(response.data);
+          // Additional code...
         } catch (error) {
-          console.error("Error sending data:", error);
+          console.error("Error sending data to server:", error);
           alert(
             "Error sending to the server. Check the console for more details."
           );
@@ -30,21 +48,22 @@
         const responseElement = document.getElementById("apiResponse");
         responseElement.textContent = JSON.stringify(data, null, 2);
       }
+
+      function forwardToWebSocket(data) {
+        const ws = new WebSocket(
+          "wss://craftcast-ws-365cc828bed7.herokuapp.com/ "
+        );
+        ws.onopen = function () {
+          console.log("Connected to WebSocket server");
+          ws.send(JSON.stringify(data)); // Send the JSON data as a string
+        };
+        ws.onmessage = function (event) {
+          console.log("Message from server ", event.data);
+        };
+        ws.onerror = function (error) {
+          console.error("WebSocket error: ", error);
+        };
+      }
     </script>
-  </head>
-  <body>
-    <h1>ChatGPT API Sender</h1>
-    <input type="text" id="inputText" placeholder="Enter your text here" />
-    <button onclick="handleSubmit()">Send</button>
-    <pre
-      id="apiResponse"
-      style="
-        background: #f4f4f4;
-        padding: 10px;
-        border: 1px solid #ddd;
-        border-radius: 5px;
-        margin-top: 20px;
-      "
-    ></pre>
   </body>
 </html>
