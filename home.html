@@ -46,7 +46,12 @@
 
       function displayResponse(data) {
         const responseElement = document.getElementById("apiResponse");
-        responseElement.textContent = JSON.stringify(data, null, 2);
+        const formattedData = JSON.stringify(data, null, 2).replace(
+          /\n/g,
+          "<br>"
+        );
+        responseElement.innerHTML = formattedData;
+        forwardToWebSocket(data); // Forward the original data to the WebSocket
       }
 
       function forwardToWebSocket(data) {
