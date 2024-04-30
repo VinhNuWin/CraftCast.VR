@@ -21,93 +21,6 @@
     ></pre>
 
     <script>
-      let socket;
-      const serverUrl = "wss://craftcast-ws-365cc828bed7.herokuapp.com/";
-
-      function connect() {
-        if (socket !== undefined && socket.readyState !== WebSocket.CLOSED) {
-          console.log("WebSocket already connected.");
-          return;
-        }
-
-        socket = new WebSocket(serverUrl);
-
-        socket.onopen = () => {
-          console.log("WebSocket Connected");
-        };
-
-        socket.onclose = () => {
-          console.log("WebSocket Disconnected. Attempting to reconnect...");
-          setTimeout(connect, 10000); // Attempt to reconnect every 10 seconds
-        };
-
-        socket.onmessage = (event) => {
-          console.log("Message from server ", event.data);
-        };
-
-        socket.onerror = (error) => {
-          console.error("WebSocket error: ", error);
-        };
-      }
-
-      async function sendToChatGPTApi(text) {
-        console.log("Sending to ChatGPT API via Heroku server");
-        try {
-          const response = await axios.post(
-            "https://craft-server-api-4a5c605b59f7.herokuapp.com/process",
-            { text }
-          );
-          console.log("Response from server:", response.data);
-          displayResponse(response.data);
-        } catch (error) {
-          console.error("Error sending data to server:", error);
-          alert(
-            "Error sending to the server. Check the console for more details."
-          );
-        }
-      }
-
-      function handleSubmit() {
-        const inputText = document.getElementById("inputText").value;
-        sendToChatGPTApi(inputText);
-      }
-
-      function displayResponse(data) {
-        const responseElement = document.getElementById("apiResponse");
-        responseElement.innerHTML = JSON.stringify(data, null, 2).replace(
-          /\n/g,
-          "<br>"
-        );
-      }
-
-      connect(); // Initial connection
-    </script>
-  </body>
-</html>
-
-<!-- <!DOCTYPE html>
-<html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <title>Send to ChatGPT API</title>
-    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
-  </head>
-  <body>
-    <h1>ChatGPT API Integration</h1>
-    <input type="text" id="inputText" placeholder="Enter your text here" />
-    <button onclick="handleSubmit()">Send</button>
-    <pre
-      id="apiResponse"
-      style="
-        background: #f4f4f4;
-        padding: 10px;
-        border: 1px solid #ddd;
-        border-radius: 5px;
-        margin-top: 20px;
-      "
-    ></pre>
-
-    <script>
       async function sendToChatGPTApi(text) {
         console.log("Sending to ChatGPT API via Heroku server");
         try {
@@ -162,46 +75,7 @@
           console.error("WebSocket error: ", error);
         };
       }
-
-      function establishUnityConnection() {
-        // Data to send to Unity
-        const requestData = {
-          // Add any data you want to send to Unity here
-        };
-
-        // Axios POST request to Unity
-        axios
-          .post("unity_connection_endpoint", requestData)
-          .then(function (response) {
-            console.log("Connection with Unity established:", response.data);
-            // Handle success response from Unity
-          })
-          .catch(function (error) {
-            console.error("Error establishing connection with Unity:", error);
-            // Handle error response from Unity
-          });
-      }
-      let socket;
-      const serverUrl = "wss://example.com/path";
-
-      function connect() {
-        socket = new WebSocket(serverUrl);
-
-        socket.onopen = () => {
-          console.log("WebSocket Connected");
-        };
-
-        socket.onclose = () => {
-          console.log("WebSocket Disconnected. Attempting to reconnect...");
-          setTimeout(connect, 10000); // Attempt to reconnect every 10 seconds
-        };
-
-        socket.onmessage = (event) => {
-          console.log("Message from server ", event.data);
-        };
-      }
-
       connect(); // Initial connection
     </script>
   </body>
-</html> -->
+</html>
