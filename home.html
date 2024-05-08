@@ -21,6 +21,8 @@
     ></pre>
 
     <script>
+      const UNITY_DEEPLINK = "craftlab://open"; // Update this URL to match your Unity deeplink
+
       async function sendToChatGPTApi(text) {
         console.log("Sending to ChatGPT API via Heroku server");
         try {
@@ -30,7 +32,6 @@
           );
           console.log("Response from server:", response.data);
           displayResponse(response.data);
-          // Additional code...
         } catch (error) {
           console.error("Error sending data to server:", error);
           alert(
@@ -42,6 +43,7 @@
       function handleSubmit() {
         const inputText = document.getElementById("inputText").value;
         sendToChatGPTApi(inputText);
+        launchUnityApp();
       }
 
       function displayResponse(data) {
@@ -51,31 +53,126 @@
           "<br>"
         );
         responseElement.innerHTML = formattedData;
-        forwardToWebSocket(data); // Forward the original data to the WebSocket
+        forwardToWebSocket(data);
       }
 
       function forwardToWebSocket(data) {
         const ws = new WebSocket(
           "wss://craftcast-ws-365cc828bed7.herokuapp.com/"
-          // "ws://localhost:3000/"
         );
         ws.onopen = function () {
           console.log("Connected to WebSocket server");
-          ws.send(JSON.stringify(data)); // Send the JSON data as a string
+          ws.send(JSON.stringify(data));
         };
         ws.onmessage = function (event) {
           console.log("Message from server ", event.data);
-          // Check if the received message contains the data from ChatGPT
-          if (event.data.chatResponse) {
-            // Establish connection with Unity
-            establishUnityConnection(data);
-          }
         };
         ws.onerror = function (error) {
           console.error("WebSocket error: ", error);
         };
       }
-      connect(); // Initial connection
+
+      function launchUnityApp() {
+        // Assuming you want to open a specific scene and stay on the page
+        var url = "craftlab://open?sceneId=craftplay"; // Example, adjust parameters as needed
+        var iframe = document.createElement("iframe");
+        iframe.style.display = "none";
+        iframe.src = url;
+        document.body.appendChild(iframe);
+
+        // Optionally remove the iframe after a few seconds to clean up
+        setTimeout(function () {
+          document.body.removeChild(iframe);
+        }, 3000);
+      }
     </script>
   </body>
 </html>
+
+<!-- <!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Send to ChatGPT API</title>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+  </head>
+  <body>
+    <h1>ChatGPT API Integration</h1>
+    <input type="text" id="inputText" placeholder="Enter your text here" />
+    <button onclick="handleSubmit()">Send</button>
+    <pre
+      id="apiResponse"
+      style="
+        background: #f4f4f4;
+        padding: 10px;
+        border: 1px solid #ddd;
+        border-radius: 5px;
+        margin-top: 20px;
+      "
+    ></pre>
+
+    <script>
+      const ws = new WebSocket(
+        // "wss://craftcast-ws-365cc828bed7.herokuapp.com/"
+        "ws://localhost:3000/"
+      );
+
+      ws.onopen = function () {
+        console.log("Connected to WebSocket server");
+      };
+
+      ws.onerror = function (error) {
+        console.error("WebSocket error: ", error);
+      };
+
+      async function sendToChatGPTApi(text) {
+        console.log("Sending to ChatGPT API via Heroku server");
+        try {
+          const response = await axios.post(
+            "https://craft-server-api-4a5c605b59f7.herokuapp.com/process",
+            { text }
+          );
+          console.log("Response from server:", response.data);
+          displayResponse(response.data);
+          forwardToWebSocket(response.data);
+        } catch (error) {
+          console.error("Error sending data to server:", error);
+          alert(
+            "Error sending to the server. Check the console for more details."
+          );
+        }
+      }
+
+      function handleSubmit() {
+        const inputText = document.getElementById("inputText").value.trim();
+        if (inputText) {
+          sendToChatGPTApi(inputText);
+        } else {
+          alert("Please enter some text before sending.");
+        }
+      }
+
+      function displayResponse(data) {
+        const responseElement = document.getElementById("apiResponse");
+        responseElement.textContent = JSON.stringify(data, null, 2);
+      }
+
+      function forwardToWebSocket(data) {
+        const encodedMessage = JSON.stringify(data).replace(/`/g, ""); // Removing backticks from the JSON string
+        const bufferSize = new Blob([encodedMessage]).size;
+        const MAX_SIZE = 65535; // Adjust the buffer size limit as needed
+
+        if (bufferSize < MAX_SIZE && ws.readyState === WebSocket.OPEN) {
+          ws.send(encodedMessage);
+          console.log("Message sent to WebSocket server.");
+        } else if (bufferSize >= MAX_SIZE) {
+          console.error(
+            "Message not sent: size exceeds the maximum buffer limit."
+          );
+        } else {
+          console.log("WebSocket is not open. Message not sent.");
+        }
+      }
+    </script>
+  </body>
+</html> -->
