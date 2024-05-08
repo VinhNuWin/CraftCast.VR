@@ -21,7 +21,7 @@
     ></pre>
 
     <script>
-      const UNITY_DEEPLINK = "craftlab://open"; // Update this URL to match your Unity deeplink
+      const UNITY_DEEPLINK = "craftlab://open?sceneId=craftscene"; // Update this URL to match your Unity deeplink
 
       async function sendToChatGPTApi(text) {
         console.log("Sending to ChatGPT API via Heroku server");
@@ -74,7 +74,7 @@
 
       function launchUnityApp() {
         // Assuming you want to open a specific scene and stay on the page
-        var url = "craftlab://open?sceneId=craftplay"; // Example, adjust parameters as needed
+        var url = "craftlab://open?sceneId=craftscene"; // Example, adjust parameters as needed
         var iframe = document.createElement("iframe");
         iframe.style.display = "none";
         iframe.src = url;
