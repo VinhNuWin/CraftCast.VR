@@ -73,11 +73,9 @@
       }
 
       function launchUnityApp() {
-        // Assuming you want to open a specific scene and stay on the page
-        var url = "craftlab://open?sceneId=craftscene"; // Example, adjust parameters as needed
         var iframe = document.createElement("iframe");
         iframe.style.display = "none";
-        iframe.src = url;
+        iframe.src = UNITY_DEEPLINK;
         document.body.appendChild(iframe);
 
         // Optionally remove the iframe after a few seconds to clean up
