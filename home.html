@@ -4,6 +4,7 @@
     <meta charset="UTF-8" />
     <title>Send to ChatGPT API</title>
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcode-generator/1.4.4/qrcode.min.js"></script>
   </head>
   <body>
     <h1>ChatGPT API Integration</h1>
@@ -22,7 +23,7 @@
     <a href="craftlab://open?sceneId=homefeed" target="_blank"
       >Open Home Feed in CraftLab</a
     >
-
+    <img id="qrCode" alt="QR Code" style="display: block; margin: auto" />
     <script>
       const UNITY_DEEPLINK = "craftlab://open?sceneId=homefeed"; // Update this URL to match your Unity deeplink
 
@@ -86,6 +87,28 @@
           document.body.removeChild(iframe);
         }, 3000);
       }
+
+      function generateQRCode() {
+        // Initialize the QR code generator with higher scale factor (e.g., type number 4 for larger version)
+        var qr = qrcode(4, "L");
+
+        // Add data to be encoded in the QR code
+        qr.addData("craftlab://open?sceneId=homefeed");
+        qr.make();
+
+        // Create the data URL for the QR code
+        var qrCodeURL = qr.createDataURL(10); // The parameter controls the magnification factor
+
+        // Set the src attribute of the img element to display the QR code
+        var qrImage = document.getElementById("qrCode");
+        qrImage.src = qrCodeURL;
+
+        // Optionally set width and height attributes to control the displayed size
+        qrImage.width = 300; // Customize these values as per your desired size
+        qrImage.height = 300;
+      }
+
+      window.onload = generateQRCode;
     </script>
   </body>
 </html>
